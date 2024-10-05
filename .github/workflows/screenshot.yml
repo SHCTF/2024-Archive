@@ -54,17 +54,21 @@ jobs:
       - name: Checkout to scoreboard branch
         run: |
           git checkout -b scoreboard || git checkout scoreboard
-
+        
+      - name: Pull remote changes
+        run: git pull origin scoreboard
+        
       - name: Add files
         run: |
           git add screenshots/
-
+        
       - name: Commit changes
         run: |
-          git commit -m "Add screenshot taken at ${{ env.datetime }}"
-
+          git commit -m "Add screenshot taken at ${{ env.datetime }}" || echo "No changes to commit"
+        
       - name: Push changes
         run: |
           git push origin scoreboard
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
