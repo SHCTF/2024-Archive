@@ -2,25 +2,36 @@ name: SHCTF-2024-Scoreboard-ScreenShot
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 每小时执行一次
+    - cron: '0 * * * *'
   workflow_dispatch:
+
 jobs:
   screenshot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
+      - name: Get Date
+        id: get_date
+        run: echo "date=$(date +'%m-%d')" >> $GITHUB_ENV
+
       - name: ScreenShot
         uses: swinton/screenshot-website@v1.x
         with:
-          source: 'https://shc.tf/games/1/scoreboard'  # 替换为你要截图的网站
-          destination: 'screenshots/screenshot-${{ github.run_id }}.png'  # 存储路径和文件名
-          width: 5000  # 自定义宽度
-          full-page: true  # 截取整个页面
-          
+          source: 'https://shc.tf/games/1/scoreboard'
+          destination: 'screenshot-${{ env.date }}.png'
+          width: 5000
+          full-page: true 
+
+      - name: Create scoreboard Dir
+        run: mkdir -p scoreboard
+
+      - name: Move to scoreboard Dir
+        run: mv screenshot-${{ env.date }}.png scoreboard/screenshot-${{ env.date }}.png
+
       - name: Upload screenshot
         uses: actions/upload-artifact@v3
         with:
-          name: screenshot
-          path: screenshots/screenshot-${{ github.run_id }}.png
+          name: scoreboard-screenshot-${{ env.date }}
+          path: scoreboard/screenshot-${{ env.date }}.png
