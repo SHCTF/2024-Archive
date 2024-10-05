@@ -1,10 +1,9 @@
-name: SHCTF-2024-Scoreboard-ScreenShot
+name: Playwright Screenshot
 
 on:
-  push: {branches: ["main"]}
-  schedule:
-    - cron: '0 * * * *'  # 每小时触发一次
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   screenshot:
@@ -12,49 +11,24 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Get Time
-        run: echo "datetime=$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_ENV
-
-      - name: ScreenShot
-        uses: swinton/screenshot-website@v1.x
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          source: 'https://shc.tf/games/1/scoreboard'
-          destination: 'screenshot-${{ env.datetime }}.png'
-          width: 5000
-          full-page: true
+          node-version: '16'
 
-      # 添加调试步骤，检查文件是否生成
-      - name: List files in the workspace
-        run: ls -alh
+      - name: Install Playwright
+        run: npm install playwright
 
-      # 继续后续步骤
-      - name: Create output directory
-        run: mkdir -p screenshots
-
-      - name: Move Screenshot
-        run: mv screenshot-${{ env.datetime }}.png screenshots/
-
-      - name: Configure Git
+      - name: Run Playwright Script
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          npx playwright install
+          node screenshot.js
 
-      - name: Checkout to scoreboard branch
-        run: |
-          git checkout -b scoreboard || git checkout scoreboard
-
-      - name: Add files
-        run: |
-          git add screenshots/
-
-      - name: Commit changes
-        run: |
-          git commit -m "Add screenshot taken at ${{ env.datetime }}"
-
-      - name: Push changes
-        run: |
-          git push origin scoreboard
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # 上传生成的截图
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v3
+        with:
+          name: scoreboard_screenshot
+          path: scoreboard_screenshot.png
