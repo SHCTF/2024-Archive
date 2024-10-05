@@ -56,5 +56,5 @@ jobs:
       - name: Push changes
         run: |
           git push origin scoreboard
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
