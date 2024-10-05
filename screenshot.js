@@ -11,6 +11,7 @@ const { chromium } = require('playwright');
   // 等待一个特定的网络请求完成（例如：请求数据接口 '/api/data' 返回 200 状态码）
   await page.waitForResponse(response => 
     response.url().includes('/api/game/1/scoreboard') && response.status() === 200);
+  await page.waitForLoadState('networkidle');
 
   // 截图保存
   await page.screenshot({ path: 'scoreboard_screenshot.png' });

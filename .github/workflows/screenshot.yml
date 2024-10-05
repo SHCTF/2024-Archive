@@ -27,6 +27,8 @@ jobs:
           node screenshot.js
 
     # 上传生成的截图
+      - name: List files in the workspace
+        run: ls -alh
       - name: Upload screenshot
         uses: actions/upload-artifact@v3
         with:
