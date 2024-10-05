@@ -24,12 +24,6 @@ jobs:
           width: 5000
           full-page: true 
 
-      - name: Create scoreboard Dir
-        run: mkdir -p scoreboard
-
-      - name: Move to scoreboard Dir
-        run: mv screenshot-${{ env.date }}.png scoreboard/screenshot-${{ env.date }}.png
-
       - name: Upload screenshot
         uses: actions/upload-artifact@v3
         with:
