@@ -2,7 +2,7 @@ name: SHCTF-2024-Scoreboard-ScreenShot
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 * * * *'  # 每小时触发一次
   workflow_dispatch:
 
 jobs:
@@ -21,13 +21,40 @@ jobs:
           source: 'https://shc.tf/games/1/scoreboard'
           destination: 'screenshot-${{ env.datetime }}.png'
           width: 5000
-          full-page: true 
+          full-page: true
 
-      - name: Move Screenshot to scoreboard folder
-        run: mv screenshot-${{ env.datetime }}.png scoreboard/
+      # 创建一个目录来存放截图文件（这步可以根据实际需求调整）
+      - name: Create output directory
+        run: mkdir -p screenshots
 
-      - name: Commit and Push Screenshot
+      # 将截图移动到 output 目录中（方便后续提交操作）
+      - name: Move Screenshot
+        run: mv screenshot-${{ env.datetime }}.png screenshots/
+
+      # 配置 Git 用户
+      - name: Configure Git
         run: |
-          git add scoreboard/screenshot-${{ env.datetime }}.png
-          git commit -m "Add screenshot-${{ env.datetime }}.png"
-          git push origin main
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      # 创建或切换到 scoreboard 分支，并复制文件
+      - name: Checkout to scoreboard branch
+        run: |
+          git checkout -b scoreboard || git checkout scoreboard
+
+      # 将截图文件添加到 Git 暂存区
+      - name: Add files
+        run: |
+          git add screenshots/
+
+      # 提交到 scoreboard 分支
+      - name: Commit changes
+        run: |
+          git commit -m "Add screenshot taken at ${{ env.datetime }}"
+
+      # 推送到 scoreboard 分支
+      - name: Push changes
+        run: |
+          git push origin scoreboard
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
