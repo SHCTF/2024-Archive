@@ -1,6 +1,8 @@
 name: Playwright Screenshot
 
 on:
+  schedule:
+    - cron: '0 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 * * *'
   push:
     branches:
       - main
@@ -36,14 +38,13 @@ jobs:
         run: ls -alh
 
       - name: Get Time
-        run: echo "datetime=$(date +'%Y-%m-%d-%H-%M')" >> $GITHUB_ENV
+        run: echo "datetime=$(date -d '+8 hour' +'%F %H:%M')" >> $GITHUB_ENV
 
-      # 继续后续步骤
       - name: Create output directory
         run: mkdir -p screenshots
 
       - name: Move Screenshot
-        run: mv scoreboard_screenshot.png screenshots/screenshot-${{ env.datetime }}.png
+        run: mv scoreboard_screenshot.png "screenshots/screenshot-${{ env.datetime }}.png"
 
       - name: Configure Git
         run: |
@@ -54,13 +55,16 @@ jobs:
         run: |
           git checkout -b scoreboard || git checkout scoreboard
 
+      - name: Pull remote changes with rebase (use theirs strategy)
+        run: git pull --rebase -X theirs origin scoreboard
+
       - name: Add files
         run: |
           git add screenshots/
 
       - name: Commit changes
         run: |
-          git commit -m "Add screenshot taken at ${{ env.datetime }}"
+          git commit -m "Add screenshot taken at ${{ env.datetime }}" || echo "No changes to commit"
 
       - name: Push changes
         run: |
