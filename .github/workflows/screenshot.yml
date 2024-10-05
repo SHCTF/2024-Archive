@@ -55,8 +55,8 @@ jobs:
         run: |
           git checkout -b scoreboard || git checkout scoreboard
 
-      - name: Pull remote changes with rebase
-        run: git pull --rebase origin scoreboard
+      - name: Pull remote changes with merge
+        run: git merge -X theirs origin/scoreboard
 
       - name: Add files
         run: |
