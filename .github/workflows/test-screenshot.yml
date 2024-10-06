@@ -1,0 +1,44 @@
+name: Playwright Screenshot Test
+
+on:
+#   schedule:
+#     - cron: '0 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23 * * *'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Chinese Fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y msttcorefonts # 安装Noto CJK字体
+
+      - name: Install Playwright
+        run: npm install playwright
+
+      - name: Run Playwright Script
+        run: |
+          npx playwright install
+          node screenshot.js
+
+      - name: List files in the workspace
+        run: ls -alh
+
+      - name: Upload screenshot
+        uses: actions/upload-artifact@v3
+        with:
+          name: scoreboard_screenshot
+          path: scoreboard_screenshot.png
