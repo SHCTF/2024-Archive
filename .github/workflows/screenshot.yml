@@ -56,7 +56,10 @@ jobs:
           git checkout -b scoreboard || git checkout scoreboard
 
       - name: Pull remote changes with rebase (use theirs strategy)
-        run: git pull --rebase -X theirs origin scoreboard
+        run: |
+          git add .
+          git commit -m "Save local changes before rebase"
+          git pull --rebase -X theirs origin scoreboard
 
       - name: Add files
         run: |
