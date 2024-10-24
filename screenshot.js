@@ -3,7 +3,7 @@ const { chromium } = require('playwright');
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  await page.setViewportSize({ width: 12000, height: 2240 });
+  await page.setViewportSize({ width: 14500, height: 2240 });
 
   // 打开目标网页
   await page.goto('https://shc.tf/games/1/scoreboard');
